@@ -2,6 +2,7 @@ package com.ps.transaction_service.service;
 
 import com.ps.transaction_service.dto.CreateTransactionRequest;
 import com.ps.transaction_service.dto.TransactionResponse;
+import com.ps.transaction_service.dto.TransactionStatusPatchRequest;
 import com.ps.transaction_service.entity.Transaction;
 import com.ps.transaction_service.model.TransactionStatus;
 import com.ps.transaction_service.repository.TransactionRepository;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 public class TransactionService {
@@ -36,17 +38,35 @@ public class TransactionService {
 
         Transaction saved = transactionRepository.save(transaction);
 
-        return new TransactionResponse(
-                saved.getId(),
-                saved.getUserId(),
-                saved.getAmount(),
-                saved.getCurrency(),
-                saved.getRecipientAccount(),
-                saved.getDescription(),
-                saved.getStatus(),
-                saved.getCreatedAt()
-        );
+        return getTransactionResponse(saved);
+    }
 
+    public TransactionResponse getTransactionByID(UUID transactionId) {
+        Transaction transaction = getByID(transactionId);
+        return getTransactionResponse(transaction);
+    }
+
+    public void patchTransactionStatus(UUID transactionId, TransactionStatusPatchRequest request) {
+       Transaction transaction = getByID(transactionId);
+       transaction.setStatus(request.status());
+       transactionRepository.save(transaction);
+    }
+
+    private Transaction getByID(UUID transactionId) {
+        return transactionRepository.findById(transactionId).orElseThrow();
+    }
+
+    private TransactionResponse getTransactionResponse(Transaction transaction) {
+        return new TransactionResponse(
+                transaction.getId(),
+                transaction.getUserId(),
+                transaction.getAmount(),
+                transaction.getCurrency(),
+                transaction.getRecipientAccount(),
+                transaction.getDescription(),
+                transaction.getStatus(),
+                transaction.getCreatedAt()
+        );
     }
 
 }
