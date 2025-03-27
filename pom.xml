@@ -6,6 +6,7 @@
 	<properties>
 		<java.version>17</java.version>
 		<spring.boot.version>3.4.4</spring.boot.version>
+		<jib.version>3.4.5</jib.version>
 	</properties>
 
 	<parent>
@@ -68,7 +69,7 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>3.4.5</version>
+				<version>${jib.version}</version>
 			</plugin>
 		</plugins>
 	</build>
